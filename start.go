@@ -26,7 +26,7 @@ func startCmd() cli.Command {
 				Usage: "Run container in background.",
 			},
 			cli.StringFlag{
-				Name: "env-file",
+				Name:  "env-file",
 				Usage: "Path to Fn server configuration file.",
 			},
 		},
@@ -48,7 +48,7 @@ func start(c *cli.Context) error {
 	if c.String("log-level") != "" {
 		args = append(args, "-e", fmt.Sprintf("GIN_MODE=%v", c.String("log-level")))
 	}
-	if c.String("env-file") != ""{
+	if c.String("env-file") != "" {
 		args = append(args, "--env-file", c.String("env-file"))
 	}
 	if c.Bool("detach") {

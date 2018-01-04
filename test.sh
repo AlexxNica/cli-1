@@ -8,7 +8,7 @@ if [[ -z "$FN_REGISTRY" ]]; then
 fi
 $fn --version
 
-go test $(go list ./... | grep -v /vendor/ | grep -v /tests)
+go test -v $(go list ./... | grep -v /vendor/ | grep -v /tests)
 
 # This tests all the quickstart commands on the cli on a live server
 rm -rf tmp
@@ -22,11 +22,10 @@ $fn run
 $fn test
 
 someport=50080
-docker rm --force functions || true # just in case
-docker pull fnproject/functions
-docker run --name functions -d -v /var/run/docker.sock:/var/run/docker.sock -p $someport:8080 fnproject/functions
+docker rm --force fnserver || true # just in case
+docker run --name fnserver -d -v /var/run/docker.sock:/var/run/docker.sock -p $someport:8080 fnproject/fnserver
 sleep 10
-docker logs functions
+docker logs fnserver
 
 export FN_API_URL="http://localhost:$someport"
 $fn apps l
@@ -60,7 +59,7 @@ $fn call myapp1 /$funcname
 $fn routes create myapp1 /another --image $FN_REGISTRY/$funcname:0.0.2
 $fn call myapp1 /another
 
-docker rm --force functions
+docker rm --force fnserver
 
 cd ../..
 rm -rf tmp
